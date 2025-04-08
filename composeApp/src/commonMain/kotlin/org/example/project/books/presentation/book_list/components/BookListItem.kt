@@ -51,7 +51,7 @@ fun BookListItem(
     onCardClick: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(32.dp),
+        shape = RoundedCornerShape(24.dp),
         color = Color.White,
         modifier = modifier.clickable { onCardClick() }
     ) {
@@ -134,7 +134,7 @@ fun RowScope.BookImage(modifier: Modifier = Modifier, imageUrl: String?) {
                     model = imageUrl,
                     contentDescription = null,
                     onLoading = {
-//                        imageLoading = true
+                        imageLoading = true
                     },
                     onSuccess = {
                         imageLoading = false

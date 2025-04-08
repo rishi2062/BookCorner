@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,11 +48,11 @@ fun BookListScreen(
 //    LaunchedEffect(state.searchResult){
 //        scrollState.animateScrollToItem(0)
 //    }
-    LaunchedEffect(state.selectedTabIndex){
+    LaunchedEffect(state.selectedTabIndex) {
         pagerState.animateScrollToPage(state.selectedTabIndex)
     }
 
-    LaunchedEffect(pagerState.currentPage){
+    LaunchedEffect(pagerState.currentPage) {
         onEvent(BookListEvents.onTabSelected(pagerState.currentPage))
     }
 
@@ -83,10 +85,12 @@ fun BookListScreen(
                 ),
             color = MaterialTheme.colorScheme.secondary,
         ) {
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 TabRow(
                     selectedTabIndex = state.selectedTabIndex,
                     modifier = Modifier.widthIn(max = 700.dp)
@@ -106,60 +110,79 @@ fun BookListScreen(
                     )
                 }
 
-                Spacer(Modifier.height(10.dp))
-                HorizontalPager(
-                    state = pagerState, modifier = Modifier.fillMaxWidth().weight(1f)
-                ) { pageIndex ->
-
-                    when (pageIndex) {
-                        0 -> {
-                            Box(
-                                modifier = modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (state.books.isEmpty()) {
-                                    Text(
-                                        text = "No books found",
-                                        textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                } else {
-                                    BookList(
-                                        books = state.books,
-                                        onBookClick = {
-                                            onEvent(BookListEvents.onBookClick(it))
-                                        },
-                                        scrollState = scrollState
-                                    )
-                                }
-                            }
-                        }
-
-                        1 -> {
-                            Box(
-                                modifier = modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (state.favorites.isEmpty()) {
-                                    Text(
-                                        text = "No favorites yet",
-                                        textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                } else {
-                                    BookList(
-                                        books = state.favorites,
-                                        onBookClick = {
-                                            onEvent(BookListEvents.onBookClick(it))
-                                        },
-                                        scrollState = favScrollState
-                                    )
-                                }
-                            }
+                when {
+                    state.isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color.White
+                            )
                         }
                     }
 
+                    else -> {
+                        Spacer(Modifier.height(10.dp))
+                        HorizontalPager(
+                            state = pagerState, modifier = Modifier.fillMaxWidth().weight(1f)
+                        ) { pageIndex ->
 
+                            when (pageIndex) {
+                                0 -> {
+                                    Box(
+                                        modifier = modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        when {
+                                            state.books.isEmpty() -> {
+                                                Text(
+                                                    text = "No books found",
+                                                    textAlign = TextAlign.Center,
+                                                    style = MaterialTheme.typography.bodyMedium
+                                                )
+                                            }
+
+                                            else -> {
+                                                BookList(
+                                                    books = state.books,
+                                                    onBookClick = {
+                                                        onEvent(BookListEvents.onBookClick(it))
+                                                    },
+                                                    scrollState = scrollState
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                1 -> {
+                                    Box(
+                                        modifier = modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (state.favorites.isEmpty()) {
+                                            Text(
+                                                text = "No favorites yet",
+                                                textAlign = TextAlign.Center,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        } else {
+                                            BookList(
+                                                books = state.favorites,
+                                                onBookClick = {
+                                                    onEvent(BookListEvents.onBookClick(it))
+                                                },
+                                                scrollState = favScrollState
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        }
+                    }
                 }
             }
         }

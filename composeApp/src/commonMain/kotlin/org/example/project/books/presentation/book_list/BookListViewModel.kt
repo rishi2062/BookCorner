@@ -23,6 +23,7 @@ class BookListViewModel(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BookListState())
+
     // either, we check initial state here, so that in every recompose , when viewmodel initialises, it should not hit api again
     // or we can put launchedEffect and check if cachedBook is empty then only make api call.
     val state = _state
@@ -31,6 +32,8 @@ class BookListViewModel(
                 _state.update {
                     it.copy(books = cachedBooks)
                 }
+            } else {
+                observeSearchQuery()
             }
         }
         // if we don't give stateIn , it becomes coldFlow,
@@ -54,13 +57,13 @@ class BookListViewModel(
         )
     }
 
-    init {
-        _state.update {
-            it.copy(books = books)
-        }
-    }
+//    init {
+//        _state.update {
+//            it.copy(books = books)
+//        }
+//    }
 
-    fun updateSearchQuery(query: String) {
+    fun observeSearchQuery() {
         viewModelScope.launch {
             state
                 .map { it.searchQuery }
@@ -85,6 +88,12 @@ class BookListViewModel(
                         }
                     }
                 }
+        }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _state.update {
+            it.copy(searchQuery = query)
         }
     }
 
