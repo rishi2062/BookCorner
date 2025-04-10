@@ -1,7 +1,7 @@
 package org.example.project.books.domain
 
 data class Book(
-    val id : String? = null,
+    val id : String,
     val imageUrl : String? = null,
     val title : String? = null,
     val authors : List<Author>? = emptyList(),

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -89,7 +88,7 @@ fun BookDetailsScreen(
 
         IconButton(
             onClick = onBackClick,
-            modifier = Modifier.align(androidx.compose.ui.Alignment.TopStart)
+            modifier = Modifier.align(Alignment.TopStart)
                 .padding(16.dp)
                 .statusBarsPadding()
         ) {
@@ -119,13 +118,14 @@ fun BookDetailsScreen(
                     targetState = imageResult
                 ) { result ->
                     when (result) {
-                        null ->
+                        null -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator()
                             }
+                        }
 
                         else -> {
                             Box {
